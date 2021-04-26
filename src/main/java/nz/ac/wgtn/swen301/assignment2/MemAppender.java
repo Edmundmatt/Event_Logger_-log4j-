@@ -7,17 +7,16 @@ import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class MemAppender implements Appender {
 
+    private static final String name = "default";
     private static final long maxSize = 1000;
-    private List<LoggingEvent> logEvents = new ArrayList<>();
-
-    public List<LoggingEvent> getCurrentLogs(){
-        final List<LoggingEvent> currentLogs = logEvents;
-        return currentLogs;
-    }
+    private Queue<LoggingEvent> logEvents = new LinkedList<>();
+    private int discardedLogCount = 0;
 
     public void exportToJSON(String fileName){
         
@@ -45,12 +44,15 @@ public class MemAppender implements Appender {
 
     @Override
     public void doAppend(LoggingEvent loggingEvent) {
-
+        //Add new logging event to the end of the queue
+        logEvents.add(loggingEvent);
+        //Check if queue is over capacity
+        if(logEvents.size() > maxSize) removeOldest();
     }
 
     @Override
     public String getName() {
-        return null;
+        return this.name;
     }
 
     @Override
@@ -75,11 +77,25 @@ public class MemAppender implements Appender {
 
     @Override
     public void setName(String s) {
-
+        this.name = s;
     }
 
     @Override
     public boolean requiresLayout() {
         return false;
+    }
+
+    public Queue<LoggingEvent> getCurrentLogs(){
+        final Queue<LoggingEvent> currentLogs = logEvents;
+        return currentLogs;
+    }
+
+    private void removeOldest(){
+        logEvents.poll();
+        this.discardedLogCount++;
+    }
+
+    public long getDiscardedLogCount(){
+        return this.discardedLogCount;
     }
 }
