@@ -6,14 +6,12 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
 public class MemAppender implements Appender {
 
-    private static final String name = "default";
+    private static String name = "default";
     private static final long maxSize = 1000;
     private Queue<LoggingEvent> logEvents = new LinkedList<>();
     private int discardedLogCount = 0;
