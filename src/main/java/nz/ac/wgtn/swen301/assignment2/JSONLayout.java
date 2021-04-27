@@ -17,6 +17,7 @@ public class JSONLayout extends Layout
 
     @Override
     public String format(LoggingEvent loggingEvent) {
+        //Create JSON attributes
         String logger = loggingEvent.getLoggerName();
         Level level = loggingEvent.getLevel();
         long time = loggingEvent.getStartTime();

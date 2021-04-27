@@ -6,6 +6,8 @@ import org.apache.log4j.spi.ErrorHandler;
 import org.apache.log4j.spi.Filter;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,7 +19,12 @@ public class MemAppender implements Appender {
     private int discardedLogCount = 0;
 
     public void exportToJSON(String fileName){
-        
+        try(FileWriter file = new FileWriter(fileName)){
+            file.write(logEvents.toString());
+
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
