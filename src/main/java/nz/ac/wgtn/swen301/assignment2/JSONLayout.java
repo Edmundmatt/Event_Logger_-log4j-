@@ -10,11 +10,17 @@ public class JSONLayout extends Layout
 {
     public static void main( String[] args ) {
         Logger logger = Logger.getLogger("org.apache.log4j.Test");
-        LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
-                Level.ERROR, "testMessage", null);
+        LoggingEvent event0 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
+                Level.ERROR, "test message 0", null);
+        LoggingEvent event1 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
+                Level.ERROR, "test message 1", null);
+        LoggingEvent event2 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
+                Level.ERROR, "test message 2", null);
 
         MemAppender appender = new MemAppender();
-        appender.append(event);
+        appender.append(event0);
+        appender.append(event1);
+        appender.append(event2);
         appender.exportToJSON("jsonFileTest.json");
     }
 

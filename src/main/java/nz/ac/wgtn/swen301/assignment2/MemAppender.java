@@ -59,21 +59,22 @@ public class MemAppender extends AppenderSkeleton {
     }
 
     private String eventsToString(List<LoggingEvent> logEvents){
-        String output = "[\n";
-        for(LoggingEvent event: logEvents){
-            output += eventToString(event);
+        String output = "[";
+        for(int i = 0; i < logEvents.size(); i++){
+            output += eventToString(logEvents.get(i));
+            if(i != logEvents.size()-1) output += ",";
         }
-        output += "]";
+        output += "\n]";
         return output;
     }
 
     private String eventToString(LoggingEvent logEvent){
-        return "\t{\n" +
+        return "\n\t{\n" +
                 "\t\t\"logger\":\"" + logEvent.getLoggerName() + "\",\n" +
                 "\t\t\"level\":\"" + logEvent.getLevel() + "\",\n" +
                 "\t\t\"starttime\":\"" + logEvent.getTimeStamp() + "\",\n" +
                 "\t\t\"thread\":\"" + logEvent.getThreadName() + "\",\n" +
                 "\t\t\"message\":\"" + logEvent.getRenderedMessage() + "\"\n" +
-                "\t}\n";
+                "\t}";
     }
 }
