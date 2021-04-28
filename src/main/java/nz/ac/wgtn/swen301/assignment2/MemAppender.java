@@ -1,45 +1,28 @@
 package nz.ac.wgtn.swen301.assignment2;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Layout;
-import org.apache.log4j.spi.ErrorHandler;
-import org.apache.log4j.spi.Filter;
+import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
-public class MemAppender implements Appender {
+public class MemAppender extends AppenderSkeleton {
 
     private static String name = "default";
     private static final long maxSize = 1000;
-    private Queue<LoggingEvent> logEvents = new LinkedList<>();
+    private List<LoggingEvent> logEvents = new ArrayList<>();
     private int discardedLogCount = 0;
 
-    public void exportToJSON(String fileName){
-        try(FileWriter file = new FileWriter(fileName)){
-            file.write(logEvents.toString());
-
-        }catch(IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
-    public void addFilter(Filter filter) {
-
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
-    }
-
-    @Override
-    public void clearFilters() {
-
+    protected void append(LoggingEvent loggingEvent) {
+        //Add new logging event to the end of the queue
+        logEvents.add(loggingEvent);
+        //Check if queue is over capacity
+        if(logEvents.size() > maxSize) removeOldest();
     }
 
     @Override
@@ -48,59 +31,49 @@ public class MemAppender implements Appender {
     }
 
     @Override
-    public void doAppend(LoggingEvent loggingEvent) {
-        //Add new logging event to the end of the queue
-        logEvents.add(loggingEvent);
-        //Check if queue is over capacity
-        if(logEvents.size() > maxSize) removeOldest();
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void setErrorHandler(ErrorHandler errorHandler) {
-
-    }
-
-    @Override
-    public ErrorHandler getErrorHandler() {
-        return null;
-    }
-
-    @Override
-    public void setLayout(Layout layout) {
-
-    }
-
-    @Override
-    public Layout getLayout() {
-        return null;
-    }
-
-    @Override
-    public void setName(String s) {
-        this.name = s;
-    }
-
-    @Override
     public boolean requiresLayout() {
         return false;
     }
 
-    public Queue<LoggingEvent> getCurrentLogs(){
-        final Queue<LoggingEvent> currentLogs = logEvents;
+    public List<LoggingEvent> getCurrentLogs(){
+        final List<LoggingEvent> currentLogs = logEvents;
         return currentLogs;
     }
 
     private void removeOldest(){
-        logEvents.poll();
+        logEvents.remove(logEvents.size()-1);
         this.discardedLogCount++;
     }
 
     public long getDiscardedLogCount(){
         return this.discardedLogCount;
+    }
+
+    public void exportToJSON(String fileName){
+        try(FileWriter file = new FileWriter(fileName)){
+            file.write(eventsToString(logEvents));
+
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String eventsToString(List<LoggingEvent> logEvents){
+        String output = "[\n";
+        for(LoggingEvent event: logEvents){
+            output += eventToString(event);
+        }
+        output += "]";
+        return output;
+    }
+
+    private String eventToString(LoggingEvent logEvent){
+        return "\t{\n" +
+                "\t\t\"logger\":\"" + logEvent.getLoggerName() + "\",\n" +
+                "\t\t\"level\":\"" + logEvent.getLevel() + "\",\n" +
+                "\t\t\"starttime\":\"" + logEvent.getTimeStamp() + "\",\n" +
+                "\t\t\"thread\":\"" + logEvent.getThreadName() + "\",\n" +
+                "\t\t\"message\":\"" + logEvent.getRenderedMessage() + "\"\n" +
+                "\t}\n";
     }
 }
