@@ -7,15 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 public class MemAppender extends AppenderSkeleton {
 
-    private static String name = "default";
+    private static String name = "";
     private static final long maxSize = 1000;
     private List<LoggingEvent> logEvents = new ArrayList<>();
     private int discardedLogCount = 0;
-
 
     @Override
     protected void append(LoggingEvent loggingEvent) {
@@ -41,7 +39,7 @@ public class MemAppender extends AppenderSkeleton {
     }
 
     private void removeOldest(){
-        logEvents.remove(logEvents.size()-1);
+        logEvents.remove(0);
         this.discardedLogCount++;
     }
 
