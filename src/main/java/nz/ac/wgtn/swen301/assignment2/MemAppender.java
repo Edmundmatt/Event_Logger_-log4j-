@@ -2,6 +2,7 @@ package nz.ac.wgtn.swen301.assignment2;
 
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.FileWriter;
@@ -96,5 +97,10 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
                 "\t\t\"thread\":\"" + logEvent.getThreadName() + "\",\n" +
                 "\t\t\"message\":\"" + logEvent.getRenderedMessage() + "\"\n" +
                 "\t}";
+    }
+
+    public String defaultFormatting(LoggingEvent event){
+        PatternLayout layout = new PatternLayout();
+        return layout.format(event);
     }
 }

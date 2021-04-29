@@ -101,6 +101,5 @@ public class MemAppenderTest {
         LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
                 Level.ERROR, "test message 0", null);
         app.append(event);
-
     }
 }

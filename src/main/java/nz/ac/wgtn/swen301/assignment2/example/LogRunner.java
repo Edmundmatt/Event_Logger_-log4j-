@@ -8,7 +8,6 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
-import java.util.List;
 import java.util.Random;
 
 public class LogRunner {
@@ -18,15 +17,16 @@ public class LogRunner {
      */
 
     private static Logger LOGGER = Logger.getLogger("org.apache.log4j.Test");
+
     public static void main(String args[]) throws InterruptedException {
         MemAppender appender = new MemAppender();
         JSONLayout layout = new JSONLayout();
 
         //MBeans initialisation
         try{
-            ObjectName objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=basic,name=MemAppender");
+            ObjectName objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=MemAppender");
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-            server.registerMBean(new MemAppender(), objectName);
+            server.registerMBean(appender, objectName);
         }catch(MalformedObjectNameException | InstanceAlreadyExistsException |
                 MBeanRegistrationException | NotCompliantMBeanException e){
             e.printStackTrace();
@@ -40,7 +40,7 @@ public class LogRunner {
             appender.append(event);
             Thread.sleep(1000);
             System.out.println(appender.getLogCount());
-            System.out.println(layout.format(event));
+            System.out.println(appender.defaultFormatting(event));
 
         }
     }
