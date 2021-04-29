@@ -36,15 +36,18 @@ public class LogRunner {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + 120000;
         while(System.currentTimeMillis() < endTime){
-            appender.append(randomEvent());
+            LoggingEvent event = randomEvent();
+            appender.append(event);
             Thread.sleep(1000);
             System.out.println(appender.getLogCount());
+            System.out.println(layout.format(event));
+
         }
     }
 
     private static LoggingEvent randomEvent(){
         Random r = new Random();
-        Level[] levels = {Level.ERROR, Level.WARN};
+        Level[] levels = {Level.TRACE, Level.DEBUG, Level.INFO, Level.WARN, Level.ERROR, Level.FATAL};
         Level level = levels[r.nextInt(levels.length)];
         LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
                 level, "Message: Level - " + level, null);

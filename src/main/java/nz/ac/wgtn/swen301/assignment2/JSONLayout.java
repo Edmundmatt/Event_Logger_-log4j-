@@ -12,36 +12,7 @@ import java.lang.management.ManagementFactory;
 public class JSONLayout extends Layout
 {
     public static void main( String[] args ) {
-        Logger logger = Logger.getLogger("org.apache.log4j.Test");
-        LoggingEvent event0 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
-                Level.ERROR, "test message 0", null);
-        LoggingEvent event1 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
-                Level.ERROR, "test message 1", null);
-        LoggingEvent event2 = new LoggingEvent("org.apache.logging.log4j", logger, System.currentTimeMillis(),
-                Level.ERROR, "test message 2", null);
 
-
-
-        MemAppender appender = new MemAppender();
-        appender.append(event0);
-        appender.append(event1);
-        appender.append(event2);
-        for(String event : appender.getLogs()){
-            System.out.println(event);
-        }
-//        appender.exportToJSON("jsonFileTest.json");
-
-        //JMX Agent
-        try{
-            ObjectName objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=basic,name=MemAppender");
-            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-            server.registerMBean(new MemAppender(), objectName);
-        }catch(MalformedObjectNameException | InstanceAlreadyExistsException |
-                MBeanRegistrationException | NotCompliantMBeanException e){
-            e.printStackTrace();
-        }
-
-        while(true){}
     }
 
     @Override
