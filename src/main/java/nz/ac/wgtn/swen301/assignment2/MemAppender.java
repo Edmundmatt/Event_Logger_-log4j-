@@ -1,6 +1,7 @@
 package nz.ac.wgtn.swen301.assignment2;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 
 import java.io.FileWriter;
@@ -13,10 +14,13 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
     private static String name = "";
     private static final long maxSize = 1000;
     private List<LoggingEvent> logEvents = new ArrayList<>();
+
+    private String[] logs = getLogs();
+
     private int discardedLogCount = 0;
 
     @Override
-    protected void append(LoggingEvent loggingEvent) {
+    public void append(LoggingEvent loggingEvent) {
         //Add new logging event to the end of the queue
         logEvents.add(loggingEvent);
         //Check if queue is over capacity
@@ -45,9 +49,12 @@ public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     @Override
     public String[] getLogs() {
+        JSONLayout layout = new JSONLayout();
         String[] logArray = new String[logEvents.size()];
+
         for(int i = 0; i < logArray.length; i++){
-            //String representation of LoggingEvent is obtained using org.apache.log4j.PatternLayout with deafult conversion pattern
+            //String representation of LoggingEvent is obtained using org.apache.log4j.PatternLayout with default conversion pattern
+            logArray[i] = layout.format(logEvents.get(i));
 //            logArray[i] =
         }
         return logArray;
