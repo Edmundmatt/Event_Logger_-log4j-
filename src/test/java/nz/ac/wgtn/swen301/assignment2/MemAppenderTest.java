@@ -3,7 +3,11 @@ package nz.ac.wgtn.swen301.assignment2;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
+import org.json.JSONTokener;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class MemAppenderTest {
 
@@ -71,5 +75,32 @@ public class MemAppenderTest {
             System.out.println(layout.format(event));
         }
         assert(app.getCurrentLogs().get(0).getRenderedMessage().equals("20"));
+    }
+
+    @Test
+    public void MemAppenderTestFile1(){
+        //Null LoggingEvent to File
+        MemAppender app = new MemAppender();
+        app.append(null);
+
+    }
+
+    @Test
+    public void MemAppenderTest2() throws FileNotFoundException {
+        //No events to File
+        MemAppender app = new MemAppender();
+        app.exportToJSON("jsonFileTest2.json");
+        JSONTokener tokener = new JSONTokener(new FileReader("jsonFileTest2.json"));
+
+    }
+
+    @Test
+    public void MemAppenderTestFile3(){
+        //One LoggingEvent to file
+        MemAppender app = new MemAppender();
+        LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
+                Level.ERROR, "test message 0", null);
+        app.append(event);
+
     }
 }

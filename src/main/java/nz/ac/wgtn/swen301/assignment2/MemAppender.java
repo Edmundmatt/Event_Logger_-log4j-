@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemAppender extends AppenderSkeleton {
+public class MemAppender extends AppenderSkeleton implements MemAppenderMBean {
 
     private static String name = "";
     private static final long maxSize = 1000;
@@ -43,6 +43,21 @@ public class MemAppender extends AppenderSkeleton {
         this.discardedLogCount++;
     }
 
+    @Override
+    public String[] getLogs() {
+        String[] logArray = new String[logEvents.size()];
+        for(int i = 0; i < logArray.length; i++){
+            //String representation of LoggingEvent is obtained using org.apache.log4j.PatternLayout with deafult conversion pattern
+//            logArray[i] =
+        }
+        return logArray;
+    }
+
+    @Override
+    public long getLogCount() {
+        return logEvents.size();
+    }
+
     public long getDiscardedLogCount(){
         return this.discardedLogCount;
     }
@@ -59,7 +74,7 @@ public class MemAppender extends AppenderSkeleton {
     private String eventsToString(List<LoggingEvent> logEvents){
         String output = "[";
         for(int i = 0; i < logEvents.size(); i++){
-            output += eventToString(logEvents.get(i));
+            if(logEvents.get(i) != null) output += eventToString(logEvents.get(i));
             if(i != logEvents.size()-1) output += ",";
         }
         output += "\n]";

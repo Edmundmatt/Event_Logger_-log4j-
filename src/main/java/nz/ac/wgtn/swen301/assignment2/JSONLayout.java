@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.json.JSONObject;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
+
 public class JSONLayout extends Layout
 {
     public static void main( String[] args ) {
@@ -22,6 +25,17 @@ public class JSONLayout extends Layout
         appender.append(event1);
         appender.append(event2);
         appender.exportToJSON("jsonFileTest.json");
+
+        //JMX Agent
+        try{
+            ObjectName objectName = new ObjectName("nz.ac.wgtn.swen301.assignment2:type=basic,name=memAppender");
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            server.registerMBean(new MemAppender(), objectName);
+        }catch(MalformedObjectNameException | InstanceAlreadyExistsException |
+                MBeanRegistrationException | NotCompliantMBeanException e){
+            e.printStackTrace();
+        }
+        while(true){}
     }
 
     @Override
