@@ -33,4 +33,18 @@ public class JSONLayoutTest {
         assertEquals(object.get("message"), "test1Message");
     }
 
+    @Test
+    public void JSONLayoutTest2(){
+        //ignoresThrowable test
+        JSONLayout layout = new JSONLayout();
+        assert(layout.ignoresThrowable() == false);
+    }
+
+    @Test
+    public void JSONLayoutTest3(){
+        //activateOptions test
+        JSONLayout layout = new JSONLayout();
+        layout.activateOptions();
+    }
+
 }

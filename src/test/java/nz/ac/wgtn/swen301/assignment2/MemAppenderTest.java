@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MemAppenderTest {
 
@@ -86,11 +89,25 @@ public class MemAppenderTest {
     }
 
     @Test
-    public void MemAppenderTest2() throws FileNotFoundException {
+    public void MemAppenderTestFile2() throws FileNotFoundException {
         //No events to File
         MemAppender app = new MemAppender();
-        app.exportToJSON("jsonFileTest2.json");
-        JSONTokener tokener = new JSONTokener(new FileReader("jsonFileTest2.json"));
+        String fileName = "jsonFileTest2.json";
+        app.exportToJSON(fileName);
+        String output = app.readFromFile(fileName);
+        String expected = "[\n]\n";
+
+//        Charset charset = Charset.forName("ASCII");
+//        byte[] outputArray = output.getBytes(charset);
+//        byte[] expectedArray = expected.getBytes(charset);
+//        for(int i = 0; i < outputArray.length; i++){
+//            System.out.print(outputArray[i] + " ");
+//        }
+//        System.out.println();
+//        for(int i = 0; i < expectedArray.length; i++){
+//            System.out.print(expectedArray[i] + " ");
+//        }
+        assert(output.equals(expected));
 
     }
 
@@ -98,8 +115,61 @@ public class MemAppenderTest {
     public void MemAppenderTestFile3(){
         //One LoggingEvent to file
         MemAppender app = new MemAppender();
+        JSONLayout layout = new JSONLayout();
         LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
                 Level.ERROR, "test message 0", null);
         app.append(event);
+        String fileName = "jsonFileTest2.json";
+        app.exportToJSON(fileName);
+        String output = app.readFromFile(fileName);
+        String eventString = app.eventToString(event);
+        String expected = "[" +
+                eventString +
+                "\n]\n";
+        assert(output.equals(expected));
     }
+
+    @Test
+    public void MemAppenderTestFile4(){
+        //6 LoggingEvent's to file
+        MemAppender app = new MemAppender();
+        JSONLayout layout = new JSONLayout();
+        List<LoggingEvent> events = new ArrayList<>();
+        for(int i = 0; i < 6; i++){
+            LoggingEvent randEvent = app.randomEvent();
+            events.add(randEvent);
+            app.append(randEvent);
+        }
+        String fileName = "jsonFileTest2.json";
+        app.exportToJSON(fileName);
+        String output = app.readFromFile(fileName);
+        String expected = "[";
+        for(int i = 0; i < events.size()-1; i++){
+            expected += app.eventToString(events.get(i));
+            expected += ",";
+        }
+        expected += app.eventToString((events.get(5)));
+        expected += "\n]\n";
+        System.out.println(expected);
+        assert(output.equals(expected));
+
+
+    }
+
+    @Test
+    public void MemAppenderLogsTest(){
+        MemAppender appender = new MemAppender();
+        assert(appender.getLogCount() == 0);
+        appender.append(new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
+                Level.ERROR, "test message 0", null));
+        assert(appender.getLogCount() == 1);
+    }
+
+    @Test
+    public void MemAppenderCleanUpTest(){
+        MemAppender appender = new MemAppender();
+        appender.close();
+        assert(appender.requiresLayout() == false);
+    }
+
 }

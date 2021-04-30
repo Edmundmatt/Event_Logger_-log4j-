@@ -2,19 +2,12 @@ package nz.ac.wgtn.swen301.assignment2;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.json.JSONObject;
 
-import javax.management.*;
-import java.lang.management.ManagementFactory;
 
 public class JSONLayout extends Layout
 {
-    public static void main( String[] args ) {
-
-    }
-
     @Override
     public String format(LoggingEvent loggingEvent) {
         //Create JSON object
