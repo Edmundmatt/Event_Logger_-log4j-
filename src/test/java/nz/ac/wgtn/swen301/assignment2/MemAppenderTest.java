@@ -74,10 +74,9 @@ public class MemAppenderTest {
             app.append(new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
                     Level.ERROR, i, null));
         }
-        for(LoggingEvent event : app.getCurrentLogs()){
-            System.out.println(layout.format(event));
-        }
+        //Assert the first Log recorded is the 21st created as the first 20 have been discarded
         assert(app.getCurrentLogs().get(0).getRenderedMessage().equals("20"));
+        assert(app.getDiscardedLogCount() == 20);
     }
 
     @Test
@@ -92,21 +91,10 @@ public class MemAppenderTest {
     public void MemAppenderTestFile2() throws FileNotFoundException {
         //No events to File
         MemAppender app = new MemAppender();
-        String fileName = "jsonFileTest2.json";
+        String fileName = "jsonFileTest.json";
         app.exportToJSON(fileName);
         String output = app.readFromFile(fileName);
         String expected = "[\n]\n";
-
-//        Charset charset = Charset.forName("ASCII");
-//        byte[] outputArray = output.getBytes(charset);
-//        byte[] expectedArray = expected.getBytes(charset);
-//        for(int i = 0; i < outputArray.length; i++){
-//            System.out.print(outputArray[i] + " ");
-//        }
-//        System.out.println();
-//        for(int i = 0; i < expectedArray.length; i++){
-//            System.out.print(expectedArray[i] + " ");
-//        }
         assert(output.equals(expected));
 
     }
@@ -119,7 +107,7 @@ public class MemAppenderTest {
         LoggingEvent event = new LoggingEvent("org.apache.logging.log4j", LOGGER, System.currentTimeMillis(),
                 Level.ERROR, "test message 0", null);
         app.append(event);
-        String fileName = "jsonFileTest2.json";
+        String fileName = "jsonFileTest.json";
         app.exportToJSON(fileName);
         String output = app.readFromFile(fileName);
         String eventString = app.eventToString(event);
@@ -140,7 +128,7 @@ public class MemAppenderTest {
             events.add(randEvent);
             app.append(randEvent);
         }
-        String fileName = "jsonFileTest2.json";
+        String fileName = "jsonFileTest.json";
         app.exportToJSON(fileName);
         String output = app.readFromFile(fileName);
         String expected = "[";
@@ -150,7 +138,6 @@ public class MemAppenderTest {
         }
         expected += app.eventToString((events.get(5)));
         expected += "\n]\n";
-        System.out.println(expected);
         assert(output.equals(expected));
 
 
